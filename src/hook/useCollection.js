@@ -5,19 +5,22 @@ import { db } from "../firebase/config"
 export const useCollection = (collectionName) => {
     const [data, setData] = useState(null)
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, collectionName), (snapshot)=>{
-            // console.log(snapshot);
-            const data = []
-            snapshot.forEach((item) => {
-                data.push({
-                    uid: item.id,
-                    ...item.data()
-                });
-                
-            });    
-            setData(data)        
-        })
-        return
+        const unsubscribe = onSnapshot(
+            collection(db, collectionName),
+            (snapshot) => {
+                const data = []
+                snapshot.forEach((item) => {
+                    data.push({
+                        uid: item.id,
+                        ...item.data()
+                    });
+                });    
+                setData(data)        
+            }
+        )
+    
+        return () => unsubscribe() // <--- ВАЖНО!
     }, [collectionName])
+    
     return { data }
 }
